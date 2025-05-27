@@ -116,26 +116,6 @@
   
   function initialize () {
     nn.get('body').css({backgroundColor: 'black'})
-    music = nn.create('audio')
-      .set({
-        src: 'hopecore_song.mp3',
-        id: 'music',
-        loop: true
-      })
-      .addTo('body')
-    music.volume = 1
-    music.play()
-    
-    static = nn.create('audio')
-      .set({
-        src: 'static.mp3',
-        id: 'static',
-        loop: true
-      })
-      .addTo('body')
-    
-    static.volume = 0.1
-    static.play()
     
     
     
@@ -196,6 +176,27 @@
   }
   
   nn.on('load', initialize)
+  nn.on('keydown', () => {
+  music = nn.create('audio')
+    .set({
+      src: 'hopecore_song.mp3',
+      loop: true
+    })
+    .addTo('body')
+
+  static = nn.create('audio')
+    .set({
+      src: 'static.mp3',
+      loop: true
+    })
+    .addTo('body')
+
+  music.volume = 1
+  static.volume = 0
+
+  music.play()
+  static.play()
+})
 
   
 </script>

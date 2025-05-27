@@ -3,6 +3,7 @@
   /* global nn*/
   let bg_sat = 0
   let phone_sat = 100
+  let phone_width = 10
   let isDragging = false
   let coordOnPhone = {x: 0, y: 0}
   
@@ -35,28 +36,26 @@
   
   function endDrag () {
     isDragging = false
-    nn.get('#img_div').css({backgroundColor: 'red'})
+    reset()
   }
   
   function isHalfOutside() {
-    const phone = nn.get('#phone');
-    const container = nn.get('#img_div');
-    
+    const phone = nn.get('#phone')    
     
     const phoneLeft = phone.offsetLeft
     const phoneTop = phone.offsetTop
     const phoneWidth = phone.offsetWidth
     const phoneHeight = phone.offsetHeight
 
-    const halfWidth = phoneWidth / 2;
-    const halfHeight = phoneHeight / 2;
+    const halfWidth = phoneWidth / 2
+    const halfHeight = phoneHeight / 2
 
     const leftOutside = phoneLeft < -halfWidth
     const topOutside = phoneTop < -halfHeight
     const rightOutside = phoneLeft + halfWidth > nn.width
     const bottomOutside = phoneTop + halfHeight > nn.height
     
-    return leftOutside || topOutside || rightOutside || bottomOutside;
+    return leftOutside || topOutside || rightOutside || bottomOutside
   }
   
   function positionPhone(phone) {
@@ -68,7 +67,38 @@
       })
 }
   
+  function reset() {
+    let bg_num = nn.randomInt(1, 8)
+    const phone = nn.get('#phone')
+    const bg_div = nn.get('#bg_div')
+    phone_width += 10
+    phone_sat -= 10
+    bg_sat += 10
+    phone.css({
+        width: `${phone_width}%`,
+        filter: `grayscale(${phone_sat}%)`
+      })
+    positionPhone(phone)
+    bg_div.css({
+      backgroundImage: `url("n${bg_num}.jpg")`,
+      filter: `grayscale(${bg_sat}%)`
+    })
+    
+    if (phone_width >= 100) {
+      final()
+    }
+    
+  }
+  
+  function final () {
+    let img_div = nn.get('#img_div')
+    let bg_div = nn.get('#bg_div')
+    img_div.remove()
+    bg_div.remove()
+  }
+  
   function initialize () {
+    nn.get('body').css({backgroundColor: 'black'})
     let bg_num = nn.randomInt(1, 8)
     
     nn.create('div')
@@ -105,7 +135,7 @@
       .css({
       position: 'absolute',
       height: 'auto',
-      width: '10%',
+      width: `${phone_width}%`,
       filter: `grayscale(${phone_sat}%)`,
       cursor: 'grab'
     })

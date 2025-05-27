@@ -1,14 +1,19 @@
 <script src="https://cdn.jsdelivr.net/gh/netizenorg/netnet-standard-library/build/nn.min.js"></script>
 <script>
   /* global nn*/
+  let music
+  
   let bg_sat = 0
   let phone_sat = 100
   let phone_width = 10
   let isDragging = false
   let coordOnPhone = {x: 0, y: 0}
+  let draggingDisabled = false
+
   
   
   function startDrag (e) {
+    if (draggingDisabled) return
     isDragging = true
     coordOnPhone.x = e.clientX - nn.get('#phone').offsetLeft
     coordOnPhone.y = e.clientY - nn.get('#phone').offsetTop
@@ -73,7 +78,7 @@
     const bg_div = nn.get('#bg_div')
     phone_width += 10
     phone_sat -= 10
-    bg_sat += 10
+    bg_sat += 20
     phone.css({
         width: `${phone_width}%`,
         filter: `grayscale(${phone_sat}%)`
@@ -84,21 +89,56 @@
       filter: `grayscale(${bg_sat}%)`
     })
     
+    music.volume -= 0.1
+    static.volume += 0.1
+    
     if (phone_width >= 100) {
+      draggingDisabled = true
       final()
     }
     
   }
   
   function final () {
-    let img_div = nn.get('#img_div')
-    let bg_div = nn.get('#bg_div')
-    img_div.remove()
-    bg_div.remove()
+    setTimeout(() => {
+      let img_div = nn.get('#img_div')
+      let bg_div = nn.get('#bg_div')
+      img_div.remove()
+      bg_div.remove()
+      music.volume = 0
+    }, 2000)
+    
+    setTimeout(() => {
+      static.volume = 0
+    }, 4000)
+    
   }
   
   function initialize () {
     nn.get('body').css({backgroundColor: 'black'})
+    music = nn.create('audio')
+      .set({
+        src: 'hopecore_song.mp3',
+        id: 'music',
+        loop: true
+      })
+      .addTo('body')
+    music.volume = 1
+    music.play()
+    
+    static = nn.create('audio')
+      .set({
+        src: 'static.mp3',
+        id: 'static',
+        loop: true
+      })
+      .addTo('body')
+    
+    static.volume = 0.1
+    static.play()
+    
+    
+    
     let bg_num = nn.randomInt(1, 8)
     
     nn.create('div')

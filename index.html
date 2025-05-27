@@ -3,8 +3,19 @@
   /* global nn*/
   
   function initialize () {
-    let bg_num = nn.randomInt(1, 8)
-    document.body.style.backgroundImage = 'url("n${bg_num}.jpg")'
+    let bg_num = nn.randomInt(1, 9)
+    nn.create('div')
+      .set({id: 'bg_div'})
+      .css({
+      width: nn.width,
+      height: nn.height,
+      backgroundImage: `url("n${bg_num}.jpg")`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    })
+      .addTo('body')
+    
   }
   
   nn.on('load', initialize)

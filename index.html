@@ -1,6 +1,13 @@
 <script src="https://cdn.jsdelivr.net/gh/netizenorg/netnet-standard-library/build/nn.min.js"></script>
 <script>
   /* global nn*/
+  
+  function initialize () {
+    let bg_num = nn.randomInt(1, 8)
+    document.body.style.backgroundImage = 'url("n${bg_num}.jpg")'
+  }
+  
+  nn.on('load', initialize)
 
   
 </script>

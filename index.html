@@ -1,22 +1,91 @@
 <script src="https://cdn.jsdelivr.net/gh/netizenorg/netnet-standard-library/build/nn.min.js"></script>
 <script>
   /* global nn*/
+  let bg_sat = 0
+  let phone_sat = 100
+  let drag_resistance = 1
+  let isDragging = false
+  let coordOnPhone = {x: 0, y: 0}
+  
+  
+  function startDrag () {
+    isDragging = true
+    setTimeout(() => {
+      coordOnPhone.x = nn.mouseX - nn.get('#phone').offsetLeft;
+      coordOnPhone.y = nn.mouseY - nn.get('#phone').offsetTop;
+    }, 0)
+  }
+  
+  function drag () {
+    if (isDragging) {
+      let newLeft = nn.mouseX - coordOnPhone.x;
+      let newTop = nn.mouseY - coordOnPhone.y;
+
+      nn.get('#phone')
+        .css({
+        left: newLeft + 'px',
+        top: newTop + 'px'
+      })
+    }
+  }
+  
+  function endDrag () {
+    isDragging = false
+  }
   
   function initialize () {
-    let bg_num = nn.randomInt(1, 9)
+    let bg_num = nn.randomInt(1, 8)
+    
     nn.create('div')
       .set({id: 'bg_div'})
       .css({
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      zIndex: -1,
       width: nn.width,
       height: nn.height,
       backgroundImage: `url("n${bg_num}.jpg")`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat'
+      backgroundRepeat: 'no-repeat',
+      filter: `grayscale(${bg_sat}%)`
     })
       .addTo('body')
     
+    const img_div = nn.create('div')
+      .set({id: 'img_div'})
+      .css({
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: nn.width,
+      height: nn.height,
+      overflow: 'hidden'
+    })
+      .addTo('body')
+    
+    const phone = nn.create('img')
+      .set({src: 'iphone.png', id: 'phone', draggable: 'false'})
+      .css({
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      height: 'auto',
+      width: '10%',
+      filter: `grayscale(${phone_sat}%)`,
+      cursor: 'grab'
+    })
+      .addTo(img_div)
+    
+    phone.on('mousedown', startDrag)
+    nn.on('mousemove', drag)
+    nn.on('mouseup', endDrag)
+    
   }
+  
+  
   
   nn.on('load', initialize)
 
